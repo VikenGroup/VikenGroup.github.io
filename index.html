@@ -20,10 +20,11 @@
 
 		.centerMe {
 		  position: absolute;
-		  top: 50%;
+		  top: calc(50% + 70px);
 		  left: 50%;
-		  -webkit-transform: translate(-50%, -50%);
-		          transform: translate(-50%, -50%);
+		  -webkit-transform: translateY(-50%) translateX(-50%);
+		  -ms-transform: translateY(-50%) translateX(-50%);
+		  transform: translateY(-50%) translateX(-50%);
 		}
 
 		::-webkit-input-placeholder {
@@ -85,11 +86,10 @@
 			/*display: block;*/
 			text-align: left;
 			position: absolute;
-			top: calc(50% + 70px);
+			top: calc(50% - 70px);
 			left: 50%;
-			-webkit-transform: translateY(-50%) translateX(-50%);
-			-ms-transform: translateY(-50%) translateX(-50%);
-			transform: translateY(-50%) translateX(-50%);
+			-webkit-transform: translate(-50%, -50%);
+			        transform: translate(-50%, -50%);
 			/*Animation*/
 			-webkit-transition: opacity .2s ease-in-out;
 			transition: opacity .2s ease-in-out;
