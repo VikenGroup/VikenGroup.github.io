@@ -20,7 +20,7 @@
 
 		.centerMe {
 		  position: absolute;
-		  top: calc(50% + 70px);
+		  top: 50%;
 		  left: 50%;
 		  -webkit-transform: translateY(-50%) translateX(-50%);
 		  -ms-transform: translateY(-50%) translateX(-50%);
@@ -32,9 +32,9 @@
 		}
 
 		.cta {
+		  margin: auto;
 		  background: #fff;
 		  font-weight: bold;
-		  /*border-radius: 25px;*/
 		  border-radius: 0px;
 		  line-height: 50px;
 		  height: 50px;
@@ -51,6 +51,7 @@
 		  display: -webkit-box;
 		  display: -ms-flexbox;
 		  display: flex;
+		  flex-wrap: wrap;
 		}
 		.cta span {
 		  opacity: 0;
@@ -79,28 +80,26 @@
 		  outline: none;
 		  color: #32a271;
 		}
-		.cta .visible-input {
-			/*-webkit-box-flex: 3;
-			    -ms-flex: 3;
-			        flex: 3;*/
-			/*display: block;*/
+		.visible-input {
+			margin-bottom: 12px;
 			text-align: left;
-			position: absolute;
-			top: calc(50% - 70px);
-			left: 50%;
-			-webkit-transform: translate(-50%, -50%);
-			        transform: translate(-50%, -50%);
-			/*Animation*/
 			-webkit-transition: opacity .2s ease-in-out;
 			transition: opacity .2s ease-in-out;
 		}
-		.cta .visible-input input{
+		.visible-input #comments{
 			border: 0;
 			width: 315px;
-			height: 45px;
-			padding: 0 10px 0 25px;
+			height: 19px;
+			padding: 13px 10px 13px 25px;
 			outline: none;
 			color: #32a271;
+			min-width:315px;
+			resize:none;
+			min-height: 19px;
+			overflow-x:hidden;
+			overflow-y:auto; 
+			max-height:20em;
+			font-family: "Roboto", sans-serif;
 		}
 		.fadeOut {
 			opacity: 0;
@@ -118,7 +117,6 @@
 		  padding: 0 15px;
 		  height: 40px;
 		  background: #32a271;
-		  /*border-radius: 25px;*/
 		  border-radius: 0px;
 		  color: #fff;
 		  border: 0;
@@ -185,26 +183,84 @@
 <body>
 
 <div class='centerMe'>
+	<div class="visible-input">
+		<textarea id="comments" type="text" name="Message" placeholder='Message' class="autofit"></textarea>
+	</div>
 	<div class='cta'>
-		<span>Proceed</span>
-		<!-- <form action="https://formspree.io/renderpipe@gmail.com"
-      method="POST"> -->
   		<form method="POST">
+
 			<div class='input'>
 				<input id="email" type="email" name="_replyto" placeholder='E-mail'>
 			</div>
 			<div class='button'>
 				<button disabled='disabled' type="submit" value="Send">Send</button>
 			</div>
-			<div class="visible-input">
-				<input id="comments" type="text" name="Message" placeholder='Message'>
-			</div>
 			<input type="hidden" name="_next" value="" />
+			<span>Proceed</span>
 		</form>
+		
 	</div>
 </div>
 
 <script>
+	// textarea auto height
+	(function(){
+	var measurer = $('<span>', {
+	   							style: "display:inline-block;word-break:break-word;visibility:hidden;white-space:pre-wrap;"})
+	   .appendTo('body');
+	function initMeasurerFor(textarea){
+	  if(!textarea[0].originalOverflowY){
+	  	textarea[0].originalOverflowY = textarea.css("overflow-y");  
+	  }  
+	  var maxWidth = textarea.css("max-width");
+	  measurer.text(textarea.text())
+	      .css("max-width", maxWidth == "none" ? textarea.width() + "px" : maxWidth)
+	      .css('font',textarea.css('font'))
+	      .css('overflow-y', textarea.css('overflow-y'))
+	      .css("max-height", textarea.css("max-height"))
+	      .css("min-height", textarea.css("min-height"))
+	      .css("min-width", textarea.css("min-width"))
+	      .css("padding", textarea.css("padding"))
+	      .css("border", textarea.css("border"))
+	      .css("box-sizing", textarea.css("box-sizing"))
+	}
+	function updateTextAreaSize(textarea){
+		textarea.height(measurer.height());
+	  var w = measurer.width();
+	  if(textarea[0].originalOverflowY == "auto"){
+	  	 console.log(measurer.height());        
+	     	var mw = textarea.css("max-width");
+	      if(mw != "none"){
+	     		if(w == parseInt(mw)){
+	      		textarea.css("overflow-y", "auto");
+	     		} else {
+	         	textarea.css("overflow-y", "hidden");
+	     		}
+	      }
+	   }
+	   textarea.width(w);
+	}
+	$('textarea.autofit').on({
+	    input: function(){      
+	      	var text = $(this).val();  
+	        if($(this).attr("preventEnter") == undefined){
+	      	   text = text.replace(/[\n]/g, "<br>&#8203;");
+	        }
+	      	measurer.html(text);                       
+	        updateTextAreaSize($(this)); 
+	    },
+	    focus: function(){
+	     initMeasurerFor($(this));
+	    },
+	    keypress: function(e){
+	    	if(e.which == 13 && $(this).attr("preventEnter") != undefined){
+	      	e.preventDefault();
+	      }
+	    }
+	});
+	})();
+
+
 	// script
 	$(".cta span").click(function(){
 		$(".cta:not(.sent)").addClass("active");
